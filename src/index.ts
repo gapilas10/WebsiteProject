@@ -6,12 +6,12 @@ import {ApolloServer} from 'apollo-server-express';
 import {buildSchema} from 'type-graphql';
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
-import { Post } from "./entities/Post";
+import { Post } from './entities/Post';
 
 const main = async () =>{ 
     const conn = await createConnection({
         type: 'postgres',
-        database: 'hand_crafted_with_love',
+        database: 'hand_crafted_with_love2',
         username: 'postgres',
         password: 'postgres',
         logging: true,
