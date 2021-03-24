@@ -4,19 +4,18 @@ import { __prod__ } from "./constants";
 import express from 'express';
 import {ApolloServer} from 'apollo-server-express';
 import {buildSchema} from 'type-graphql';
-import { HelloResolver } from "./resolvers/hello";
-import { PostResolver } from "./resolvers/post";
-import { Post } from './entities/Post';
+import { DummyClipResolver } from "./resolvers/dummyclip";
+import { DummyClip } from './entities/DummyClip';
 
 const main = async () =>{ 
     const conn = await createConnection({
         type: 'postgres',
-        database: 'hand_crafted_with_love2',
+        database: 'hand_crafted_with_love',
         username: 'postgres',
         password: 'postgres',
         logging: true,
         synchronize: true,
-        entities: [Post]
+        entities: [DummyClip]
     });
 
     console.log(conn.isConnected);
@@ -25,7 +24,7 @@ const main = async () =>{
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [HelloResolver, PostResolver],
+            resolvers: [DummyClipResolver],
             validate: false,
         }),
         

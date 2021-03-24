@@ -17,9 +17,8 @@ const typeorm_1 = require("typeorm");
 const express_1 = __importDefault(require("express"));
 const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("type-graphql");
-const hello_1 = require("./resolvers/hello");
-const post_1 = require("./resolvers/post");
-const Post_1 = require("./entities/Post");
+const dummyclip_1 = require("./resolvers/dummyclip");
+const DummyClip_1 = require("./entities/DummyClip");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const conn = yield typeorm_1.createConnection({
         type: 'postgres',
@@ -28,13 +27,13 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         password: 'postgres',
         logging: true,
         synchronize: true,
-        entities: [Post_1.Post]
+        entities: [DummyClip_1.DummyClip]
     });
     console.log(conn.isConnected);
     const app = express_1.default();
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: yield type_graphql_1.buildSchema({
-            resolvers: [hello_1.HelloResolver, post_1.PostResolver],
+            resolvers: [dummyclip_1.DummyClipResolver],
             validate: false,
         }),
     });
