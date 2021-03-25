@@ -2,21 +2,21 @@ import { Field, InputType } from "type-graphql";
 
 @InputType()
 export class CreateDummyClipInput {
-    @Field()
-    name: string;
-    
-    @Field()
-    firstBead: string;
+  @Field()
+  name: string;
 
-    @Field()
-    secondBead: string;
+  @Field()
+  firstBead: string;
 
-    @Field()
-    thirdBead: string;
+  @Field()
+  secondBead: string;
 
-    @Field()
-    highlight: string;
+  @Field()
+  thirdBead: string;
 
-    @Field()
-    decoration: string;
+  @Field()
+  highlight: string;
+
+  @Field()
+  decoration: string;
 }
