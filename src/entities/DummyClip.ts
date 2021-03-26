@@ -6,7 +6,7 @@ import { Field, ID, ObjectType } from "type-graphql";
 export class DummyClip extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
-  id!: string;
+  id!: number;
 
   @Field(() => String)
   @Column()
