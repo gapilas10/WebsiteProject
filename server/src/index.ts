@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { createConnection } from "typeorm";
-import { __prod__ } from "./constants";
+import { COOKIE_NAME, __prod__ } from "./constants";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -12,6 +12,7 @@ import { UserResolver } from "./resolvers/user";
 import Redis from "ioredis";
 import connectRedis from "connect-redis";
 import session from "express-session";
+import cors from "cors";
 
 const main = async () => {
   const conn = await createConnection({
@@ -23,16 +24,22 @@ const main = async () => {
     migrations: [path.join(__dirname, "./migrations/*")],
     entities: [DummyClip, User],
   });
-  await conn.runMigrations();
+  //await conn.runMigrations();
 
   const app = express();
 
   const RedisStore = connectRedis(session);
   const redis = new Redis(process.env.REDIS_URL);
-
+  app.set("trust proxy", 1);
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
   app.use(
     session({
-      name: "COOKIE_NAME",
+      name: COOKIE_NAME,
       store: new RedisStore({
         client: redis,
         disableTouch: true,
@@ -57,10 +64,14 @@ const main = async () => {
     context: ({ req, res }) => ({
       req,
       res,
+      redis,
     }),
   });
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({
+    app,
+    cors: false,
+  });
 
   app.listen(4000, () => {
     console.log("server started on localhost:4000");
