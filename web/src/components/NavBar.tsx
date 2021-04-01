@@ -1,33 +1,39 @@
-import { Box, Flex, Link } from "@chakra-ui/layout";
+import { Box, Flex, Heading, Link } from "@chakra-ui/layout";
 import React from "react";
 import NextLink from "next/link";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { Button } from "@chakra-ui/react";
 import { isServer } from "../utils/isServer";
+import { useApolloClient } from "@apollo/client/react/hooks";
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
-  const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
-  const [{ data, fetching }] = useMeQuery({
-    pause: isServer(),
+  const [logout, { loading: logoutFetching }] = useLogoutMutation();
+  const apolloClient = useApolloClient();
+  const { data, loading } = useMeQuery({
+    skip: isServer(),
   });
   let body = null;
 
   // data is loading
-  if (fetching) {
+  if (loading) {
     //user not logged in
   } else if (!data?.me) {
     body = (
       <>
-        <NextLink href="/login">
-          <Link color="white" mr={2}>
-            Login
-          </Link>
-        </NextLink>
-        <NextLink href="/register">
-          <Link color="white">Register</Link>
-        </NextLink>
+        <Flex p={4}>
+          <NextLink href="/login">
+            <Link color="white" mr={4} fontSize={20}>
+              Login
+            </Link>
+          </NextLink>
+          <NextLink href="/register">
+            <Link color="white" fontSize={20}>
+              Register
+            </Link>
+          </NextLink>
+        </Flex>
       </>
     );
     // user is logged in
@@ -35,18 +41,24 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     console.log("user= ", data.me.username);
     body = (
       <Box>
-        <Flex>
-          <Box mr={2} color="white">
-            {data.me.username}
-          </Box>
+        <Flex p={4}>
+          <Flex>
+            <Box mr={4} color="white" fontSize={16} alignSelf="center">
+              logged in as:{" "}
+            </Box>
+            <Box mr={4} color="white" fontSize={20}>
+              {data.me.username}
+            </Box>
+          </Flex>
           <Button
             variant="link"
-            color="white"
-            onClick={() => {
-              logout();
+            color="black"
+            onClick={async () => {
+              await logout();
+              await apolloClient.resetStore();
             }}
             isLoading={logoutFetching}
-            loadingText="Logging out"
+            fontSize={20}
           >
             Logout
           </Button>
@@ -55,8 +67,15 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     );
   }
   return (
-    <Flex bg="pink.200" p={4}>
-      <Box ml={"auto"}>{body}</Box>
+    <Flex zIndex={1} position="sticky" bg="pink.200" p={4}>
+      <Flex flex={1} m="auto">
+        <NextLink href="/">
+          <Link>
+            <Heading>Hand Crafted With Love</Heading>
+          </Link>
+        </NextLink>
+        <Box ml={"auto"}>{body}</Box>
+      </Flex>
     </Flex>
   );
 };

@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import "dotenv-safe/config";
 import { createConnection } from "typeorm";
 import { COOKIE_NAME, __prod__ } from "./constants";
 import express from "express";
@@ -25,6 +26,7 @@ const main = async () => {
     entities: [DummyClip, User],
   });
   //await conn.runMigrations();
+  //console.log(conn);
 
   const app = express();
 
@@ -51,7 +53,7 @@ const main = async () => {
         secure: __prod__, // cookie only works in https
       },
       saveUninitialized: false,
-      secret: "Roaring1Kitty2I3am4Not5A6Cat0",
+      secret: process.env.SESSION_SECRET,
       resave: false,
     })
   );
@@ -73,7 +75,7 @@ const main = async () => {
     cors: false,
   });
 
-  app.listen(4000, () => {
+  app.listen(parseInt(process.env.PORT), () => {
     console.log("server started on localhost:4000");
   });
 };
