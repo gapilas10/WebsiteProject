@@ -6,30 +6,19 @@ import { InputField } from "../components/InputField";
 import { MeDocument, MeQuery, useRegisterMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 import { useRouter } from "next/router";
-import { withApollo } from "../utils/withApollo";
-
+import { createUrqlClient } from "../utils/createUrqlClient";
+import { withUrqlClient } from "next-urql";
 interface registerProps {}
 
 const Register: React.FC<registerProps> = ({}) => {
   const router = useRouter();
-  const [register] = useRegisterMutation();
+  const [, register] = useRegisterMutation();
   return (
     <Wrapper variant="small">
       <Formik
         initialValues={{ email: "", username: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
-          const response = await register({
-            variables: { options: values },
-            update: (cache, { data }) => {
-              cache.writeQuery<MeQuery>({
-                query: MeDocument,
-                data: {
-                  __typename: "Query",
-                  me: data?.register.user,
-                },
-              });
-            },
-          });
+          const response = await register({ options: values });
           if (response.data?.register.errors) {
             setErrors(toErrorMap(response.data.register.errors));
           } else if (response.data?.register.user) {
@@ -42,12 +31,6 @@ const Register: React.FC<registerProps> = ({}) => {
           <Form>
             <VStack spacing={4} align="stretch">
               <InputField name="email" placeholder="email" label="Email" />
-
-              <InputField
-                name="confirmEmail"
-                placeholder="confirm email"
-                label="Confirm email"
-              />
               <InputField
                 name="username"
                 placeholder="username"
@@ -55,7 +38,7 @@ const Register: React.FC<registerProps> = ({}) => {
               />
               <InputField
                 name="password"
-                placeholder="pasword"
+                placeholder="password"
                 label="Password"
                 type="password"
               />
@@ -77,4 +60,4 @@ const Register: React.FC<registerProps> = ({}) => {
   );
 };
 
-export default withApollo({ ssr: false })(Register);
+export default withUrqlClient(createUrqlClient)(Register);

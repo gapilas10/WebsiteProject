@@ -5,18 +5,15 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { InputField } from "../../components/InputField";
 import { Wrapper } from "../../components/Wrapper";
-import {
-  MeDocument,
-  MeQuery,
-  useChangePasswordMutation,
-} from "../../generated/graphql";
+import { useChangePasswordMutation } from "../../generated/graphql";
 import NextLink from "next/link";
 import { toErrorMap } from "../../utils/toErrorMap";
-import { withApollo } from "../../utils/withApollo";
+import { createUrqlClient } from "../../utils/createUrqlClient";
+import { withUrqlClient } from "next-urql";
 
 const ChangePassword: NextPage = () => {
   const router = useRouter();
-  const [changePassword] = useChangePasswordMutation();
+  const [, changePassword] = useChangePasswordMutation();
   const [tokenError, setTokenError] = useState("");
   return (
     <Wrapper variant="small">
@@ -24,22 +21,9 @@ const ChangePassword: NextPage = () => {
         initialValues={{ newPassword: "" }}
         onSubmit={async (values, { setErrors }) => {
           const response = await changePassword({
-            variables: {
-              newPassword: values.newPassword,
-              token:
-                typeof router.query.token === "string"
-                  ? router.query.token
-                  : "",
-            },
-            update: (cache, { data }) => {
-              cache.writeQuery<MeQuery>({
-                query: MeDocument,
-                data: {
-                  __typename: "Query",
-                  me: data?.changePassword.user,
-                },
-              });
-            },
+            newPassword: values.newPassword,
+            token:
+              typeof router.query.token === "string" ? router.query.token : "",
           });
           if (response.data?.changePassword.errors) {
             const errorMap = toErrorMap(response.data.changePassword.errors);
@@ -60,12 +44,6 @@ const ChangePassword: NextPage = () => {
                 name="newPassword"
                 placeholder="new password"
                 label="New Password"
-                type="password"
-              />
-              <InputField
-                name="confirmPassword"
-                placeholder="new password"
-                label="Confirm Password"
                 type="password"
               />
               {tokenError ? (
@@ -96,4 +74,4 @@ const ChangePassword: NextPage = () => {
   );
 };
 
-export default withApollo({ ssr: false })(ChangePassword);
+export default withUrqlClient(createUrqlClient)(ChangePassword);
