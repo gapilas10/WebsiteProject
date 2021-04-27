@@ -13,7 +13,13 @@ const Index = () => {
       {!data ? (
         <div>loading...</div>
       ) : (
-        data.dummyClips.map((p) => <div key={p.id}>{p.name}</div>)
+        data.dummyClips.map((p) => (
+          <div key={p.id}>
+            {p.name} //
+            {p.description} //
+            {p.price} //
+          </div>
+        ))
       )}
     </>
   );

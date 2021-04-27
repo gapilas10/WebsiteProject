@@ -14,24 +14,10 @@ export type Scalars = {
   Float: number;
 };
 
-export type CreateDummyClipInput = {
+export type CreateProductInput = {
   name: Scalars['String'];
-  firstBead: Scalars['String'];
-  secondBead: Scalars['String'];
-  thirdBead: Scalars['String'];
-  highlight: Scalars['String'];
-  decoration: Scalars['String'];
-};
-
-export type DummyClip = {
-  __typename?: 'DummyClip';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  firstBead: Scalars['String'];
-  secondBead: Scalars['String'];
-  thirdBead: Scalars['String'];
-  highlight: Scalars['String'];
-  decoration: Scalars['String'];
+  description: Scalars['String'];
+  price: Scalars['Float'];
 };
 
 export type FieldError = {
@@ -42,9 +28,9 @@ export type FieldError = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createDummyClip: DummyClip;
-  updateDummyClip: DummyClip;
-  deleteDummyClip: Scalars['Boolean'];
+  createProduct: Product;
+  updateProduct: Product;
+  deleteProduct: Scalars['Boolean'];
   changePassword: UserResponse;
   forgotPassword: Scalars['Boolean'];
   register: UserResponse;
@@ -53,18 +39,18 @@ export type Mutation = {
 };
 
 
-export type MutationCreateDummyClipArgs = {
-  data: CreateDummyClipInput;
+export type MutationCreateProductArgs = {
+  data: CreateProductInput;
 };
 
 
-export type MutationUpdateDummyClipArgs = {
-  data: UpdateDummyClipInput;
+export type MutationUpdateProductArgs = {
+  data: UpdateProductInput;
   id: Scalars['String'];
 };
 
 
-export type MutationDeleteDummyClipArgs = {
+export type MutationDeleteProductArgs = {
   id: Scalars['String'];
 };
 
@@ -90,10 +76,18 @@ export type MutationLoginArgs = {
   usernameOrEmail: Scalars['String'];
 };
 
+export type Product = {
+  __typename?: 'Product';
+  id: Scalars['Float'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  price: Scalars['Float'];
+};
+
 export type Query = {
   __typename?: 'Query';
-  dummyClips: Array<DummyClip>;
-  dummyClip: DummyClip;
+  dummyClips: Array<Product>;
+  dummyClip: Product;
   me?: Maybe<User>;
 };
 
@@ -102,13 +96,10 @@ export type QueryDummyClipArgs = {
   id: Scalars['String'];
 };
 
-export type UpdateDummyClipInput = {
+export type UpdateProductInput = {
   name?: Maybe<Scalars['String']>;
-  firstBead?: Maybe<Scalars['String']>;
-  secondBead?: Maybe<Scalars['String']>;
-  thirdBead?: Maybe<Scalars['String']>;
-  highlight?: Maybe<Scalars['String']>;
-  decoration?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  price?: Maybe<Scalars['Float']>;
 };
 
 export type User = {
@@ -216,8 +207,8 @@ export type DummyClipsQueryVariables = Exact<{ [key: string]: never; }>;
 export type DummyClipsQuery = (
   { __typename?: 'Query' }
   & { dummyClips: Array<(
-    { __typename?: 'DummyClip' }
-    & Pick<DummyClip, 'id' | 'name' | 'firstBead' | 'secondBead' | 'thirdBead' | 'highlight' | 'decoration'>
+    { __typename?: 'Product' }
+    & Pick<Product, 'id' | 'name' | 'description' | 'price'>
   )> }
 );
 
@@ -311,11 +302,8 @@ export const DummyClipsDocument = gql`
   dummyClips {
     id
     name
-    firstBead
-    secondBead
-    thirdBead
-    highlight
-    decoration
+    description
+    price
   }
 }
     `;
