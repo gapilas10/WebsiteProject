@@ -5,8 +5,8 @@ import { COOKIE_NAME, __prod__ } from "./constants";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import { DummyClipResolver } from "./resolvers/dummyclip";
-import { DummyClip } from "./entities/DummyClip";
+import { ProductResolver } from "./resolvers/product";
+import { Product } from "./entities/Product";
 import { User } from "./entities/User";
 import path from "path";
 import { UserResolver } from "./resolvers/user";
@@ -14,16 +14,34 @@ import Redis from "ioredis";
 import connectRedis from "connect-redis";
 import session from "express-session";
 import cors from "cors";
+import { Address } from "./entities/Address";
+import { CartItem } from "./entities/CartItem";
+import { CreditCard } from "./entities/CreditCard";
+import { Order } from "./entities/Order";
+import { Payment } from "./entities/Payment";
+import { Shipping } from "./entities/Shipping";
+import { ProductDetails } from "./entities/ProductDetails";
 
 const main = async () => {
   const conn = await createConnection({
     type: "postgres",
-    database: "hand_crafted_with_love",
     username: "postgres",
     password: "postgres",
     logging: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [DummyClip, User],
+    synchronize: false,
+    entities: [
+      Product,
+      User,
+      Address,
+      CartItem,
+      CreditCard,
+      Order,
+      Payment,
+      Product,
+      ProductDetails,
+      Shipping,
+    ],
   });
   //await conn.runMigrations();
   //console.log(conn);
@@ -60,7 +78,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [DummyClipResolver, UserResolver],
+      resolvers: [ProductResolver, UserResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({

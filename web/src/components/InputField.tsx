@@ -3,26 +3,30 @@ import { useField } from "formik";
 import {
   FormControl,
   FormErrorMessage,
-  FormLabel,
   Input,
+  InputGroup,
+  InputLeftElement,
 } from "@chakra-ui/react";
+import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
 
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
-  label: string;
+  icon: ReactJSXElement;
   name: string;
 };
 
 export const InputField: React.FC<InputFieldProps> = ({
-  label,
+  icon,
   size: _,
   ...props
 }) => {
   const [field, { error }] = useField(props);
   return (
     <FormControl isInvalid={!!error}>
-      <FormLabel htmlFor={field.name}>{label}</FormLabel>
-      <Input {...field} {...props} id={field.name} />
-      {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
+      <InputGroup>
+        <InputLeftElement pointerEvents="none">{icon}</InputLeftElement>
+        <Input {...field} {...props} id={field.name} />
+        {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
+      </InputGroup>
     </FormControl>
   );
 };

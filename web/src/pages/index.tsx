@@ -1,9 +1,10 @@
 import { NavBar } from "../components/NavBar";
 import { useDummyClipsQuery } from "../generated/graphql";
-import { withApollo } from "../utils/withApollo";
+import { createUrqlClient } from "../utils/createUrqlClient";
+import { withUrqlClient } from "next-urql";
 
 const Index = () => {
-  const { data } = useDummyClipsQuery();
+  const [{ data }] = useDummyClipsQuery();
   return (
     <>
       <NavBar />
@@ -12,9 +13,15 @@ const Index = () => {
       {!data ? (
         <div>loading...</div>
       ) : (
-        data.dummyClips.map((p) => <div key={p.id}>{p.name}</div>)
+        data.dummyClips.map((p) => (
+          <div key={p.id}>
+            {p.name} //
+            {p.description} //
+            {p.price} //
+          </div>
+        ))
       )}
     </>
   );
 };
-export default withApollo({ ssr: true })(Index);
+export default withUrqlClient(createUrqlClient, { ssr: true })(Index);

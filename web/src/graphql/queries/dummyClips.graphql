@@ -2,10 +2,7 @@ query DummyClips {
   dummyClips {
     id
     name
-    firstBead
-    secondBead
-    thirdBead
-    highlight
-    decoration
+    description
+    price
   }
 }
